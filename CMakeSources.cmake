@@ -279,4 +279,12 @@ elseif(WINDOWS)
 		${RUNTIME_SRC_ROOT}/proj.win32/game.rc
         ${RUNTIME_SRC_ROOT}/proj.win32/WindowHelperWin32.cpp
     )
+	if(LSTGX_USE_STEAM)
+        list(APPEND GAME_HEADER
+		${RUNTIME_SRC_ROOT}/proj.win32/SteamWin32.h
+    )
+		list(APPEND GAME_HEADER
+		${RUNTIME_SRC_ROOT}/proj.win32/SteamWin32.cpp
+    )
+    endif()
 endif()
