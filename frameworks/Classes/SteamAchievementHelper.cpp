@@ -33,7 +33,7 @@ void lstg::SteamAchievementHelper::unlockAchievement(std::string ach_name)
 	// 校验成就是否已经解锁
 	if (getAchievementStatus(ach_name))
 	{
-		CC_LOG_INFO("[Steam] Achievement %s already unlock.Do nothing.");
+		CC_LOG_INFO("[Steam] Achievement %s already unlock.Do nothing.",ach_name.c_str());
 		return;
 	}
 	
