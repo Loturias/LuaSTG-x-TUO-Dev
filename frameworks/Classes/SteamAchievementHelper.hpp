@@ -1,10 +1,13 @@
 #pragma once
 #include "steam_api.h"
 #include "base/Log.h"
+#include "LogSystem.h"
 #include <utility>
 #include <string>
 #include <vector>
 #include <thread>
+#include <condition_variable>
+#include <mutex>
 using SteamAchievementStatus = std::pair<std::string, bool>;
 
 static std::vector<std::string> AchievementList =
@@ -18,6 +21,7 @@ namespace lstg
 	{
 	public:
 		SteamAchievementHelper();
+		~SteamAchievementHelper();
 
 		static SteamAchievementHelper* getInstance()
 		{
@@ -35,5 +39,11 @@ namespace lstg
 
 		// 异步向服务器提交成就数据直到StoreStats方法成功
 		void SubmitChangeAsync();
+
+		bool isDataCached = false;
+		bool isSubmitting = false;
+		std::mutex submitMutex;
+		std::condition_variable submitCondition;
+		std::thread submitThread{};
 	};
 }
