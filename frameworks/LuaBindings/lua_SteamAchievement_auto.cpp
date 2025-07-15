@@ -32,8 +32,15 @@ int lua_lstg_SteamHelper_resetAchievement(lua_State* lua_S)
 int lua_lstg_SteamHelper_getAchievementStatus(lua_State* lua_S)
 {
     LUA_INVOKE_HEADER("lstg.SteamHelper", "lstg.SteamHelper:resetAchievement");
-    LUA_TRY_INVOKE_R(1, &lstg::SteamAchievementHelper::resetAchievement);
+    LUA_TRY_INVOKE_R(1, &lstg::SteamAchievementHelper::getAchievementStatus);
     LUA_INVOKE_FOOTER("0");
+}
+
+int lua_lstg_SteamHelper_getSteamLanguageSetting(lua_State* lua_S)
+{
+	LUA_INVOKE_HEADER("lstg.SteamHelper", "lstg.SteamHelper:getSteamLanguageSetting");
+	LUA_TRY_INVOKE_R(0, &lstg::SteamAchievementHelper::getSteamLanguageSetting);
+	LUA_INVOKE_FOOTER("0");
 }
 
 int luaReg_SteamAchievement_lstgSteamAchievement(lua_State* lua_S)
@@ -47,6 +54,7 @@ int luaReg_SteamAchievement_lstgSteamAchievement(lua_State* lua_S)
 	LUA_METHOD("unlockAchievement", lua_lstg_SteamHelper_unlockAchievement);
 	LUA_METHOD("resetAchievement", lua_lstg_SteamHelper_resetAchievement);
 	LUA_METHOD("getAchievementStatus", lua_lstg_SteamHelper_getAchievementStatus);
+	LUA_METHOD("getSteamLanguageSetting", lua_lstg_SteamHelper_getSteamLanguageSetting);
     LUA_CLS_END();
     LUA_ENTRY_END(1);
     return 0;

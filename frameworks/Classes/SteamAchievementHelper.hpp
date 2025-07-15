@@ -40,6 +40,8 @@ namespace lstg
 		// 异步向服务器提交成就数据直到StoreStats方法成功
 		void SubmitChangeAsync();
 
+		std::string getSteamLanguageSetting();
+
 		bool isDataCached = false;
 		bool isSubmitting = false;
 		std::mutex submitMutex;
