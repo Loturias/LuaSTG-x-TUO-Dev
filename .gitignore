@@ -1,3 +1,8 @@
+.vs/
+.idea/
+out/
+win32-build/
+win32-build-gl/
 
 frameworks/runtime-src/Classes/Video
 frameworks/runtime-src/Classes/reader
