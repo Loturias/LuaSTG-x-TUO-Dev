@@ -152,7 +152,9 @@ void WindowHelperDesktop::moveToCenter()
 {
 	if (isFullscreen())
 		return;
-	const auto s = (view->getMonitorSize() - getSize()) / 2;
+	int xpos = 0, ypos = 0;
+	glfwGetMonitorPos(view->getMonitor(), &xpos, &ypos);
+	const auto s = (view->getMonitorSize() - getSize()) / 2 + Vec2(xpos, ypos);
 	setPosition(Vec2(s.width, s.height));
 }
 
@@ -261,22 +263,19 @@ cocos2d::Vec2 WindowHelperDesktop::getDisplayResolution()
 	return view->getMonitorSize();
 }
 
-std::vector<cocos2d::Vec2> lstg::WindowHelperDesktop::enumDisplayResolution()
+std::vector<cocos2d::Vec2> WindowHelperDesktop::enumDisplayResolution()
 {
 	std::vector<cocos2d::Vec2> res{};
-
-	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-
+	GLFWmonitor* monitor = view->getMonitor();
 	int count;
 	const GLFWvidmode* modes = glfwGetVideoModes(monitor, &count);
-
 	for (int i = 0; i < count; i++)
 	{
 		const auto& mode = modes[i];
 		bool duplicate = false;
 		for (const auto& r : res)
 		{
-			if (r.x == mode.width && r.y == mode.height)
+			if (int(r.x) == mode.width && int(r.y) == mode.height)
 			{
 				duplicate = true;
 				break;
@@ -284,13 +283,12 @@ std::vector<cocos2d::Vec2> lstg::WindowHelperDesktop::enumDisplayResolution()
 		}
 		if (duplicate)
 			continue;
-		res.push_back({ float(mode.width), float(mode.height) });
+		res.emplace_back(float(mode.width), float(mode.height));
 	}
-
 	return res;
 }
 
-void lstg::WindowHelperDesktop::setImeEnabled(bool enabled)
+void WindowHelperDesktop::setImeEnabled(bool enabled)
 {
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 	HWND hwnd = Director::getInstance()->getOpenGLView()->getWin32Window();
@@ -301,25 +299,9 @@ void lstg::WindowHelperDesktop::setImeEnabled(bool enabled)
 		ImmReleaseContext(hwnd, hIMC);
 	}
 #endif
-
-#if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
-	// TODO
-#endif
-
-#if CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
-	// TODO
-#endif
-
-#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
-	// TODO
-#endif
-
-#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
-	// TODO
-#endif
 }
 
-bool lstg::WindowHelperDesktop::isImeEnabled()
+bool WindowHelperDesktop::isImeEnabled()
 {
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 	HWND hwnd = Director::getInstance()->getOpenGLView()->getWin32Window();
@@ -330,25 +312,8 @@ bool lstg::WindowHelperDesktop::isImeEnabled()
 		ImmReleaseContext(hwnd, hIMC);
 		return b;
 	}
-
+#endif
 	return false;
-#endif
-
-#if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
-	// TODO
-#endif
-
-#if CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
-	// TODO
-#endif
-
-#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
-	// TODO
-#endif
-
-#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
-	// TODO
-#endif
 }
 
 GLFWwindow* WindowHelperDesktop::getWindow()
@@ -389,7 +354,7 @@ MonitorHelper* MonitorHelper::getCurrentMonitor()
 {
 #ifdef CC_PLATFORM_PC
 	const auto view = dynamic_cast<GLViewImpl*>(Director::getInstance()->getOpenGLView());
-	const auto p = glfwGetWindowMonitor(view->getWindow());
+	const auto p = view->getMonitor();
 	return MonitorHelperDesktop::getOrCreate(p);
 #else
 	return nullptr;
