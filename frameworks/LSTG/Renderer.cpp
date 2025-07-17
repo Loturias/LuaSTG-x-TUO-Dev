@@ -373,9 +373,8 @@ void XRenderer::renderClear(const Color4F& c)noexcept
 	}
 }
 
-bool XRenderer::setViewport(double left, double right, double bottom, double top)noexcept
+bool XRenderer::setViewport(int left, int right, int bottom, int top)noexcept
 {
-	//TODO: use float
 	const int x = std::min(left, right);
 	const int y = std::min(bottom, top);
 	const unsigned int w = std::max(left, right) - x;
@@ -460,7 +459,9 @@ bool XRenderer::render(Sprite* p, const V3F_C4B_T2F_Quad* quad,
 	tr->indexCount = 6;
 	setXTCommand(cmd, p->getTexture());
 	// note: rotation in cocos2dx is adverse to lstg
-	getNodeTransform(p->getAnchorPointInPoints(), x, y, -rot, hscale, vscale, z, cmd->getMV());
+	//getNodeTransform(p->getAnchorPointInPoints(), x, y, -rot, hscale, vscale, z, cmd->getMV());
+	transformQuad(*q, p->getAnchorPointInPoints(), x, y, -rot, hscale, vscale, z);
+	cmd->setSkipModelView(true);
 	addXTCommand(cmd);
 	return true;
 }
@@ -474,12 +475,11 @@ bool XRenderer::render(ResSprite* p, float x, float y, float rot, float hscale, 
 bool XRenderer::renderRect(ResSprite* p,
 	float x1, float y1, float x2, float y2)noexcept
 {
-	assert(p);
-
+	if (!p)
+		return false;
 	updateRenderMode(p->getRenderMode());
 
 	auto v = p->getVertex();
-	//TODO: Check Z
 	v.tl.vertices.set(x1, y1, 0.5f);
 	v.tr.vertices.set(x2, y1, 0.5f);
 	v.bl.vertices.set(x1, y2, 0.5f);
@@ -493,8 +493,8 @@ bool XRenderer::render4V(ResSprite* p,
 	float x3, float y3, float z3,
 	float x4, float y4, float z4)noexcept
 {
-	assert(p);
-
+	if (!p)
+		return false;
 	updateRenderMode(p->getRenderMode());
 
 	auto pSprite = p->getSprite();
@@ -510,6 +510,8 @@ bool XRenderer::render4V(ResSprite* p,
 bool XRenderer::render(ResAnimation* p, int ani_timer,
 	float x, float y, float rot, float hscale, float vscale)noexcept
 {
+	if (!p)
+		return false;
 	updateRenderMode(p->getRenderMode());
 	auto i = int32_t(std::floor(ani_timer / p->getInterval())) % int32_t(p->getCount());
 	if (i < 0)i += p->getCount();
@@ -519,6 +521,8 @@ bool XRenderer::render(ResAnimation* p, int ani_timer,
 
 bool XRenderer::render(ResParticle::ParticlePool* p, float hscale, float vscale)noexcept
 {
+	if (!p)
+		return false;
 	updateRenderMode(p->getRenderMode());
 	// already set in Render
 	//p->setCenter(p->getCenter());
@@ -538,24 +542,25 @@ bool XRenderer::renderTexture(Texture2D* t, const V3F_C4B_T2F_Quad* quad)noexcep
 		std::swap(q->tl.texCoords, q->bl.texCoords);
 		std::swap(q->tr.texCoords, q->br.texCoords);
 	}
+	setXTCommand(cmd, t);
 	const auto tri = cmd->getTri();
 	tri->verts = (V3F_C4B_T2F*)q;
 	tri->indices = quadIndices9;
 	tri->vertCount = 4;
 	tri->indexCount = 6;
-	*cmd->getMV() = Mat4::IDENTITY;
-	setXTCommand(cmd, t);
+	//NOTE: set after setXTCommand
+	cmd->setSkipModelView(true);
 	addXTCommand(cmd);
 	return true;
 }
 
 bool XRenderer::renderTexture(Texture2D* t, const TrianglesCommand::Triangles& triangles) noexcept
 {
-	//NOTE: this dose not fix flipped render target
+	//NOTE: this does not fix flipped render target
 	auto cmd = LMP.getXTrianglesCommand();
 	setXTCommand(cmd, t);
 	*cmd->getTri() = triangles;
-	*cmd->getMV() = Mat4::IDENTITY;
+	cmd->setSkipModelView(true);
 	addXTCommand(cmd);
 	return true;
 }
@@ -568,7 +573,8 @@ bool XRenderer::renderTexture(ResTexture* p, const V3F_C4B_T2F_Quad* quad)noexce
 bool XRenderer::renderText(ResFont* p, const std::string& str, float x, float y, float scale,
 	TextHAlignment halign, TextVAlignment valign)noexcept
 {
-	CC_ASSERT(p);
+	if (!p)
+		return false;
 	p->setHAlign(halign);
 	p->setVAlign(valign);
 	return renderText(p, str, x, y, -1, -1, scale, scale);
@@ -577,7 +583,8 @@ bool XRenderer::renderText(ResFont* p, const std::string& str, float x, float y,
 bool XRenderer::renderTextAutoAlign(ResFont* p, const std::string& str, const Rect& rect, float scale,
 	TextHAlignment halign, TextVAlignment valign, const Color4B& c)noexcept
 {
-	CC_ASSERT(p);
+	if (!p)
+		return false;
 	p->setHAlign(halign);
 	p->setVAlign(valign);
 	p->setColor(c);
@@ -601,7 +608,8 @@ bool XRenderer::renderTextAutoAlign(ResFont* p, const std::string& str, const Re
 bool XRenderer::renderText(ResFont* p, const std::string& str,
 	float x, float y, float width, float height, float scaleX, float scaleY)noexcept
 {
-	CC_ASSERT(p);
+	if (!p)
+		return false;
 	flushTriangles();
 	updateRenderMode(p->getRenderMode());
 
