@@ -27,7 +27,7 @@
 
 USING_NS_CC;
 
-#define USE_WIN32_CONSOLE
+// #define USE_WIN32_CONSOLE
 
 int WINAPI _tWinMain(HINSTANCE hInstance,
                        HINSTANCE hPrevInstance,
