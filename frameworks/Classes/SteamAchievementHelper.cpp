@@ -124,9 +124,3 @@ void lstg::SteamAchievementHelper::SubmitChangeAsync()
 	submitThread.detach();
 	return;
 }
-
-std::string lstg::SteamAchievementHelper::getSteamLanguageSetting()
-{
-	return std::string(SteamApps()->GetCurrentGameLanguage());
-}
-

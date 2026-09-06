@@ -8,6 +8,7 @@ set(GAME_HEADER
 	${LSTGX_SRC_ROOT}/Classes/MemPoolManager.h
 	${LSTGX_SRC_ROOT}/Classes/RandomWELL512.h
 	${LSTGX_SRC_ROOT}/Classes/SteamAchievementHelper.hpp
+	${LSTGX_SRC_ROOT}/Classes/SteamConfigHelper.hpp
 	${LSTGX_SRC_ROOT}/Classes/WindowHelper.h
 	${LSTGX_SRC_ROOT}/Classes/XBinaryHelper.h
 	${LSTGX_SRC_ROOT}/Classes/XBuffer.h
@@ -115,6 +116,7 @@ set(GAME_SOURCE
 	${LSTGX_SRC_ROOT}/Classes/MemPoolManager.cpp
 	${LSTGX_SRC_ROOT}/Classes/RandomWELL512.cpp
 	${LSTGX_SRC_ROOT}/Classes/SteamAchievementHelper.cpp
+	${LSTGX_SRC_ROOT}/Classes/SteamConfigHelper.cpp
 	${LSTGX_SRC_ROOT}/Classes/WindowHelper.cpp
 	${LSTGX_SRC_ROOT}/Classes/XBinaryHelper.cpp
 	${LSTGX_SRC_ROOT}/Classes/XBuffer.cpp
