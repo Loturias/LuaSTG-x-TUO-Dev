@@ -102,7 +102,7 @@ set(GAME_HEADER
 	${LSTGX_SRC_ROOT}/LuaBindings/lua_RenderMode_auto.hpp
 	${LSTGX_SRC_ROOT}/LuaBindings/lua_ResourceMgr_auto.hpp
 	${LSTGX_SRC_ROOT}/LuaBindings/lua_Resource_auto.hpp
-	${LSTGX_SRC_ROOT}/LuaBindings/lua_SteamAchievement_auto.hpp
+	${LSTGX_SRC_ROOT}/LuaBindings/lua_SteamHelper_auto.hpp
 	${LSTGX_SRC_ROOT}/LuaBindings/lua_StopWatch_auto.hpp
 	${LSTGX_SRC_ROOT}/LuaBindings/lua_Stream_auto.hpp
 	${LSTGX_SRC_ROOT}/LuaBindings/lua_Triangles_auto.hpp
@@ -207,7 +207,7 @@ set(GAME_SOURCE
 	${LSTGX_SRC_ROOT}/LuaBindings/lua_RenderMode_auto.cpp
 	${LSTGX_SRC_ROOT}/LuaBindings/lua_ResourceMgr_auto.cpp
 	${LSTGX_SRC_ROOT}/LuaBindings/lua_Resource_auto.cpp
-	${LSTGX_SRC_ROOT}/LuaBindings/lua_SteamAchievement_auto.cpp
+	${LSTGX_SRC_ROOT}/LuaBindings/lua_SteamHelper_auto.cpp
 	${LSTGX_SRC_ROOT}/LuaBindings/lua_StopWatch_auto.cpp
 	${LSTGX_SRC_ROOT}/LuaBindings/lua_Stream_auto.cpp
 	${LSTGX_SRC_ROOT}/LuaBindings/lua_Triangles_auto.cpp

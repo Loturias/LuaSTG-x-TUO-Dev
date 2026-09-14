@@ -11,6 +11,10 @@ namespace lstg
 
 		std::string getSteamLanguage();
 
+		uint64 getSteamID();
+
+		std::string getUserName();
+
 	private:
 		SteamConfigHelper() = default;
 		~SteamConfigHelper() = default;

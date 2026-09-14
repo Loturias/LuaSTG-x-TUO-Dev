@@ -18,6 +18,12 @@
 - `getAchievementStatus()` 查询单个成就，Steam 不可用/ID 无效时返回 `false` 并记录日志。
 - `getSteamLanguage()` 实际通过 `SteamConfigHelper::getSteamLanguage` 调用 `SteamApps()->GetCurrentGameLanguage()`，Lua 入口虽位于 `lua_SteamHelper_auto.cpp`，但绑定的是另一个帮助类。
 
+## Steam 工具类的分层设计
+
+Steam 相关工具在 C++ 层采用按功能拆分的设计，不同类型的能力由独立工具类维护：成就读写和提交由 `SteamAchievementHelper` 负责，Steam 配置、语言、SteamID 和用户名查询由 `SteamConfigHelper` 负责。新增 Steam 功能时，应先判断其职责归属，避免把不相关的 SDK 调用继续堆到单个类中。
+
+Lua 层对这些 C++ 类提供统一门面 `lstg.SteamHelper`。当前 `lua_SteamHelper_auto.cpp` 以 `SteamAchievementHelper` 作为 `lstg.SteamHelper` 的注册基类，将成就相关方法直接绑定到该类，同时把 `getSteamLanguage` 转发到 `SteamConfigHelper::getSteamLanguage`。因此，C++ 侧可以保持职责分离，Lua 调用方仍使用同一个 `lstg.SteamHelper` API；调整或新增 Steam 类/方法时，必须同步检查该门面的注册、方法转发和 Lua 类型名称。
+
 ## 异步提交与生命周期
 
 `SubmitChangeAsync()` 使用 `isSubmitting`、`submitMutex`、`submitCondition` 和 detached `std::thread` 调用 `StoreStats()`。失败时每 200ms 重试，最多 5 次，失败把 `isDataCached` 设为 `true`。析构函数先等待提交线程结束，再对缓存数据做一次同步提交。
@@ -26,7 +32,7 @@
 
 ## Lua 暴露接口
 
-`lua_SteamHelper_auto.cpp` 将 C++ 类以 `lstg.SteamHelper` 暴露，继承声明为 `cc.Ref`，方法包括 `getInstance`、`getSteamAchievementList`、`unlockAchievement`、`resetAchievement`、`getAchievementStatus` 和 `getSteamLanguage`。包装使用统一 `LUA_*INVOKE_*` 宏；修改 C++ 签名时必须同步包装函数和 Lua 类型注册名。
+`lua_SteamHelper_auto.cpp` 将 C++ 类以 `lstg.SteamHelper` 暴露，继承声明为 `cc.Ref`，方法包括 `getInstance`、`getSteamAchievementList`、`unlockAchievement`、`resetAchievement`、`getAchievementStatus`、`getSteamLanguage`、`getSteamID` 和 `getUserName`。包装使用统一 `LUA_*INVOKE_*` 宏；修改 C++ 签名时必须同步包装函数和 Lua 类型注册名。
 
 ## 新工具类检查表
 
